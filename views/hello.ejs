@@ -113,9 +113,10 @@
             });
         }
 
-        function updateRevenueDisplay(revenuePerHour, country = 'Norway') {
-            const selectedCurrency = document.getElementById('currency').value;
-            const convertedRevenue = revenuePerHour * rates[selectedCurrency];
+        function updateRevenueDisplay(revenuePerHourNOK, country = 'Norway') {
+    const selectedCurrency = document.getElementById('currency').value;
+    const revenuePerHourEUR = revenuePerHourNOK / rates['NOK'];
+    const convertedRevenue = revenuePerHourEUR * rates[selectedCurrency];
             const countryDiv = document.getElementById('country');
             countryDiv.innerHTML = `<h4 style="color: white;" >${country}</h4>`;
             const revenueDiv = document.getElementById('hero-description1');
@@ -140,6 +141,7 @@
             const power = powerData[0].value; // kW
             const costPerKWh = 0.33; // NOK
             const revenuePerHour = power * costPerKWh; // NOK
+            console.log(revenuePerHour)
             return revenuePerHour;
         }
         
