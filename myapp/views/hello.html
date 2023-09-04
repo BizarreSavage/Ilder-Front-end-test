@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../public/stylesheets/style.css">  
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+    <title>Eviny Varme Dashboard</title>
+</head>
+
+<body>
+    <div id="dashboard">
+    <h1>Eviny Varme Dashboard</h1>
+    
+
+        <div class="second hero" id="dashboard2">
+            <img class="hero-profile-img" src="https://eviny.iotwidget.click/eviny_logo.png" alt="">
+            <div class="hero-description-bk"></div>
+            <div class="hero-logo">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Flag_of_Norway.svg/1920px-Flag_of_Norway.svg.png" alt="">
+            </div>
+            <div class="hero-description">
+              <p id="hero-description1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            </div>
+            <div  class="hero-date">
+              <h1><p id="country">Norway</p></h1>
+              
+            </div>
+            <div id="buttons-container">
+                <button onclick="changeCurrency('NOK', 'Norway')">NOK</button>
+                <button onclick="changeCurrency('SEK', 'Sweden')">SEK</button>
+                <button onclick="changeCurrency('DKK', 'Denmark')">DKK</button>
+                <label for="currency">Select currency:</label>
+        <select id="currency" onchange="main()">
+            <option value="NOK">NOK</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="DKK">DKK</option>
+            <option value="SEK">SEK</option>
+            <!-- add more currencies here -->
+        </select>
+            </div>
+          </div>
+          
+
+        <table class="card2">
+            <tr>
+                <th>Equivalent</th>
+                <th>Average Consumption per Hour (kWh)</th>
+                <th>Equivalent for 21924 kWh</th>
+            </tr>
+            <tr>
+                <td>Normal household consumption</td>
+                <td>2.31</td>
+                <td>9481.82 households</td>
+            </tr>
+            <tr>
+                <td>Mobile phones charging</td>
+                <td>0.005</td>
+                <td>4384800 mobile phones</td>
+            </tr>
+            <tr>
+                <td>Streetlamps</td>
+                <td>0.15</td>
+                <td>146160 streetlamps</td>
+            </tr>
+        </table>
+        </div>
+
+
+    
+
+
+
+
+    <script>
+        let rates;
+
+        async function getExchangeRates() {
+            const response = await fetch('https://api.exchangerate.host/latest');
+            const data = await response.json();
+            rates = data.rates;
+        }
+
+        async function getPowerData() {
+            return new Promise((resolve, reject) => {
+                const socket = new WebSocket('wss://eviny.iotwidget.click/ws/');
+ 
+                socket.onopen = function (e) {
+                    console.log("[open] Connection established");
+                };
+
+                socket.onmessage = function (event) {
+                    const powerData = JSON.parse(event.data);
+                    resolve(powerData);
+                    socket.close();
+                };
+
+                socket.onclose = function (event) {
+                    if (event.wasClean) {
+                        console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+                    } else {
+                        console.log('[close] Connection died');
+                    }
+                };
+
+                socket.onerror = function (error) {
+                    console.log(`[error] ${error.message}`);
+                    reject(error);
+                };
+            });
+        }
+
+        function updateRevenueDisplay(revenuePerHour, country = 'Norway') {
+            const selectedCurrency = document.getElementById('currency').value;
+            const convertedRevenue = revenuePerHour * rates[selectedCurrency];
+            const countryDiv = document.getElementById('country');
+            countryDiv.innerHTML = `<h4 style="color: white;" >${country}</h4>`;
+            const revenueDiv = document.getElementById('hero-description1');
+            revenueDiv.innerHTML = `<div class="card3"><h2 style="margin: 27px;color:black">Revenue per Hour:<br> ${convertedRevenue.toFixed(2)} ${selectedCurrency}</h2></div>`;
+        }
+
+        async function main(country = 'Norway') {
+    try {
+        if (country instanceof Event) {
+            country = 'Norway';
+        }
+        await getExchangeRates();
+        const powerData = await getPowerData(country);
+        const revenuePerHourNOK = calculateRevenue(powerData);
+        updateRevenueDisplay(revenuePerHourNOK, country);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+        function calculateRevenue(powerData) {
+            const power = powerData[0].value; // kW
+            const costPerKWh = 0.33; // NOK
+            const revenuePerHour = power * costPerKWh; // NOK
+            return revenuePerHour;
+        }
+        
+        function changeCurrency(currency, country) {
+    document.getElementById('currency').value = currency;
+    const heroLogo = document.querySelector('.hero-logo img');
+    switch (country) {
+        case 'Norway':
+            heroLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Flag_of_Norway.svg/1920px-Flag_of_Norway.svg.png';
+            break;
+        case 'Sweden':
+            heroLogo.src = 'https://upload.wikimedia.org/wikipedia/en/4/4c/Flag_of_Sweden.svg';
+            break;
+        case 'Denmark':
+            heroLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/9/9c/Flag_of_Denmark.svg';
+            break;
+        default:
+            heroLogo.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Flag_of_Norway.svg/1920px-Flag_of_Norway.svg.png';
+    }
+    main(country);
+}
+
+        window.onload = main;
+    </script>
+</body>
+
+</html>
