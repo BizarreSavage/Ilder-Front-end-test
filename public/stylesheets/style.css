@@ -231,16 +231,16 @@ table tr:last-child td {
 
 @media (max-width: 768px) {
   .hero {
-    width: 100%;
-    min-width: 100%;
+    width: 90%;
+    min-width: 90%;
   }
 
   .second.hero {
-    width: 100%;
+    width: 90%;
   }
 
   table {
-    width: 100%;
+    width: 90%;
     font-size: 14px;
   }
 
@@ -248,10 +248,10 @@ table tr:last-child td {
     padding: 10px;
   }
 
-/*   #buttons-container {
-    position: static;
-    margin: 20px 0;
-  } */
+   #buttons-container {
+    left: 20px;
+    
+  }
 
   .card2 {
     border-radius: 10px;
@@ -280,5 +280,12 @@ table tr:last-child td {
 
   table {
     width: 70%;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  #dashboard button {
+    margin: 0px; /* or any other value that looks good to you */
+
   }
 }
