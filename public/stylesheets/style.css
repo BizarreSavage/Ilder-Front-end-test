@@ -228,3 +228,57 @@ table tr:first-child th:last-child {
 table tr:last-child td {
   border-bottom: none;
 }
+
+@media (max-width: 768px) {
+  .hero {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .second.hero {
+    width: 100%;
+  }
+
+  table {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  th, td {
+    padding: 10px;
+  }
+
+/*   #buttons-container {
+    position: static;
+    margin: 20px 0;
+  } */
+
+  .card2 {
+    border-radius: 10px;
+  }
+
+  .card3 {
+    margin: 0 auto;
+    margin-bottom: 10px;
+  }
+
+  #dashboard2 {
+    height: auto;
+  }
+}
+
+/* Media Query for Tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hero {
+    width: 70%;
+    min-width: 70%;
+  }
+
+  .second.hero {
+    width: 70%;
+  }
+
+  table {
+    width: 70%;
+  }
+}
